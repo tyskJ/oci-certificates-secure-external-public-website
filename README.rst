@@ -90,6 +90,7 @@ OCI Certificates で外部公開ウェブサイトを SSL化する
   cat <<EOF > oci.auto.tfvars
   tenancy_ocid = "テナンシOCID(=ルートコンパートメントOCID)"
   source_ip = "接続元IPアドレス(CIDR形式)"
+  zone_name = "デプロイするパブリックゾーン名"
   EOF
 
 
