@@ -11,6 +11,7 @@
     ├── data.tf               外部データソース定義ファイル
     ├── dns.tf                OCI DNS パブリックゾーン定義ファイル
     ├── elb.tf                OCI ELB (Flexible Load Balancer) 定義ファイル
+    ├── iam.tf                動的グループ / ポリシー 定義ファイル
     ├── locals.tf             ローカル変数定義ファイル
     ├── outputs.tf            リソース戻り値定義ファイル
     ├── providers.tf          プロバイダー定義ファイル
