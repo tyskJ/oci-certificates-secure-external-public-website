@@ -12,8 +12,8 @@ provider "oci" {
   config_file_profile = "ADMIN"
   region              = "ap-tokyo-1"
   ignore_defined_tags = [
-    "Oracle-Tag.CreatedBy",
-    "Oracle-Tag.CreatedOn",
+    "Oracle-Tags.CreatedBy",
+    "Oracle-Tags.CreatedOn",
     "Common.System"
   ]
 }
