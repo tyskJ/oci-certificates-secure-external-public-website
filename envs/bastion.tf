@@ -38,29 +38,29 @@ resource "oci_bastion_bastion" "this" {
 # /************************************************************
 # Session
 # ************************************************************/
-##### Managed SSH
-data "oci_core_instance" "oracle" {
-  instance_id = oci_core_instance.oracle_instance.id
-}
+# ##### Managed SSH
+# data "oci_core_instance" "oracle" {
+#   instance_id = oci_core_instance.oracle_instance.id
+# }
 
-resource "oci_bastion_session" "managed_ssh" {
-  # ターゲットリソースがRUNNINGでないと作成不可のためcountで制御
-  # 作成のタイミングで、Private Endpointからのインバウンドルールは不要
-  # 加えて、ターゲットリソースにてBastion pluginがRUNNINGでないと作成不可（この点は考慮できていない）
-  count = contains(["PROVISIONING", "STARTING", "RUNNING"], data.oci_core_instance.oracle.state) ? 1 : 0
+# resource "oci_bastion_session" "managed_ssh" {
+#   # ターゲットリソースがRUNNINGでないと作成不可のためcountで制御
+#   # 作成のタイミングで、Private Endpointからのインバウンドルールは不要
+#   # 加えて、ターゲットリソースにてBastion pluginがRUNNINGでないと作成不可（この点は考慮できていない）
+#   count = contains(["PROVISIONING", "STARTING", "RUNNING"], data.oci_core_instance.oracle.state) ? 1 : 0
 
-  display_name = "managed-ssh-session-to-oracle"
-  bastion_id   = oci_bastion_bastion.this.id
-  target_resource_details {
-    session_type                               = "MANAGED_SSH"
-    target_resource_id                         = oci_core_instance.oracle_instance.id
-    target_resource_operating_system_user_name = "opc"
-    target_resource_port                       = 22
-    target_resource_private_ip_address         = oci_core_instance.oracle_instance.private_ip
-  }
-  session_ttl_in_seconds = 10800 # minutes (Max)
-  key_type               = "PUB"
-  key_details {
-    public_key_content = tls_private_key.ssh_keygen.public_key_openssh
-  }
-}
+#   display_name = "managed-ssh-session-to-oracle"
+#   bastion_id   = oci_bastion_bastion.this.id
+#   target_resource_details {
+#     session_type                               = "MANAGED_SSH"
+#     target_resource_id                         = oci_core_instance.oracle_instance.id
+#     target_resource_operating_system_user_name = "opc"
+#     target_resource_port                       = 22
+#     target_resource_private_ip_address         = oci_core_instance.oracle_instance.private_ip
+#   }
+#   session_ttl_in_seconds = 10800 # minutes (Max)
+#   key_type               = "PUB"
+#   key_details {
+#     public_key_content = tls_private_key.ssh_keygen.public_key_openssh
+#   }
+# }
