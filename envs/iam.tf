@@ -21,3 +21,16 @@ resource "oci_identity_dynamic_group" "dg_certificates" {
     format("%s.%s", oci_identity_tag_namespace.common.name, oci_identity_tag_default.key_managedbyterraform.tag_definition_name) = "true"
   }
 }
+
+/************************************************************
+IAM Policy - Certificates
+************************************************************/
+resource "oci_identity_policy" "certificates_for_vault" {
+  compartment_id = oci_identity_compartment.workload.id
+  description    = "OCI Certificates Policy for Vault"
+  name           = "certificates-policy"
+  statements = [
+    format("allow dynamic-group Default/%s to use keys in compartment %s", oci_identity_dynamic_group.dg_certificates.name, oci_identity_compartment.workload.name)
+  ]
+  defined_tags = local.common_defined_tags
+}
