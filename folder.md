@@ -6,6 +6,7 @@
 .
 └── envs
     ├── backend.tf            tfstateファイル管理定義ファイル
+    ├── bastion.tf            Bastion定義ファイル
     ├── certificates.tf       OCI Certificates定義ファイル
     ├── compartments.tf       デプロイ用コンパートメント定義ファイル
     ├── compute.tf            OCI Compute定義ファイル
