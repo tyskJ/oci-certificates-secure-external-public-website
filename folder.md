@@ -8,6 +8,7 @@
     ├── backend.tf            tfstateファイル管理定義ファイル
     ├── certificates.tf       OCI Certificates定義ファイル
     ├── compartments.tf       デプロイ用コンパートメント定義ファイル
+    ├── compute.tf            OCI Compute定義ファイル
     ├── data.tf               外部データソース定義ファイル
     ├── dns.tf                OCI DNS パブリックゾーン定義ファイル
     ├── elb.tf                OCI ELB (Flexible Load Balancer) 定義ファイル
