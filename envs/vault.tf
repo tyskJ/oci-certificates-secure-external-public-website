@@ -12,9 +12,9 @@ resource "oci_kms_vault" "default" {
 KMS Key
 ************************************************************/
 resource "oci_kms_key" "key_rsa" {
-  compartment_id      = oci_identity_compartment.workload.id
-  display_name        = "certificates-hsm-key"
-  desired_state       = "ENABLED"
+  compartment_id = oci_identity_compartment.workload.id
+  display_name   = "certificates-hsm-key"
+  desired_state  = "ENABLED"
   # OCI Certificates 認証局用キーの保護モードは HSMのみ対応
   # Software は不可
   protection_mode     = "HSM"
