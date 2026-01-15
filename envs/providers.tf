@@ -17,3 +17,14 @@ provider "oci" {
     "Common.System"
   ]
 }
+
+provider "oci" {
+  alias               = "with_system_tag"
+  auth                = "SecurityToken"
+  config_file_profile = "ADMIN"
+  region              = "ap-tokyo-1"
+  ignore_defined_tags = [
+    "Oracle-Tags.CreatedBy",
+    "Oracle-Tags.CreatedOn"
+  ]
+}
