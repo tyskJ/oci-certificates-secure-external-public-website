@@ -169,6 +169,21 @@ resource "oci_core_network_security_group_security_rule" "sg_compute_ingress_htt
   }
 }
 
+resource "oci_core_network_security_group_security_rule" "sg_compute_ingress_ssh" {
+  network_security_group_id = oci_core_network_security_group.sg_compute.id
+  protocol                  = "6"
+  direction                 = "INGRESS"
+  source                    = "10.0.2.0/24"
+  stateless                 = false
+  source_type               = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      min = 22
+      max = 22
+    }
+  }
+}
+
 resource "oci_core_network_security_group_security_rule" "sg_compute_egress_all" {
   network_security_group_id = oci_core_network_security_group.sg_compute.id
   protocol                  = "all"
