@@ -91,7 +91,7 @@ Route Table
 resource "oci_core_route_table" "rtb_flb" {
   compartment_id = oci_identity_compartment.workload.id
   vcn_id         = oci_core_vcn.vcn.id
-  display_name   = "rtb"
+  display_name   = "rtb-flb"
   route_rules {
     network_entity_id = oci_core_internet_gateway.igw.id
     destination       = "0.0.0.0/0"
@@ -103,6 +103,23 @@ resource "oci_core_route_table" "rtb_flb" {
 resource "oci_core_route_table_attachment" "rtb_flb_attachment" {
   subnet_id      = oci_core_subnet.public.id
   route_table_id = oci_core_route_table.rtb_flb.id
+}
+
+resource "oci_core_route_table" "rtb_compute" {
+  compartment_id = oci_identity_compartment.workload.id
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "rtb-compute"
+  route_rules {
+    network_entity_id = oci_core_nat_gateway.ngw.id
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+  }
+  defined_tags = local.common_defined_tags
+}
+
+resource "oci_core_route_table_attachment" "rtb_compute_attachment" {
+  subnet_id      = oci_core_subnet.private.id
+  route_table_id = oci_core_route_table.rtb_compute.id
 }
 
 /************************************************************
