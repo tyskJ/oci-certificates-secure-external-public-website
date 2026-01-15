@@ -16,10 +16,17 @@ resource "oci_core_vcn" "vcn" {
 /************************************************************
 Security List
 ************************************************************/
-resource "oci_core_security_list" "sl" {
+resource "oci_core_security_list" "sl_public" {
   compartment_id = oci_identity_compartment.workload.id
   vcn_id         = oci_core_vcn.vcn.id
-  display_name   = "nothing-security-list"
+  display_name   = "sl-public"
+  defined_tags   = local.common_defined_tags
+}
+
+resource "oci_core_security_list" "sl_private" {
+  compartment_id = oci_identity_compartment.workload.id
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "sl-private"
   defined_tags   = local.common_defined_tags
 }
 
@@ -36,7 +43,7 @@ resource "oci_core_subnet" "public" {
   # ハイフンとアンダースコアは使用不可
   # 後から変更不可
   dns_label         = "public"
-  security_list_ids = [oci_core_security_list.sl.id]
+  security_list_ids = [oci_core_security_list.sl_public.id]
   # prohibit_internet_ingress と prohibit_public_ip_on_vnic は 同様の動き
   # そのため、２つのパラメータの true/false を互い違いにするとconflictでエラーとなる
   # 基本的には、値を揃えるか、どちらか一方を明記すること
@@ -55,7 +62,7 @@ resource "oci_core_subnet" "private" {
   # ハイフンとアンダースコアは使用不可
   # 後から変更不可
   dns_label         = "private"
-  security_list_ids = [oci_core_security_list.sl.id]
+  security_list_ids = [oci_core_security_list.sl_private.id]
   # prohibit_internet_ingress と prohibit_public_ip_on_vnic は 同様の動き
   # そのため、２つのパラメータの true/false を互い違いにするとconflictでエラーとなる
   # 基本的には、値を揃えるか、どちらか一方を明記すること
@@ -86,6 +93,21 @@ resource "oci_core_nat_gateway" "ngw" {
 }
 
 /************************************************************
+Service Gateway
+# ************************************************************/
+resource "oci_core_service_gateway" "service_gateway" {
+  compartment_id = oci_identity_compartment.workload.id
+  display_name   = "service-gateway"
+  vcn_id         = oci_core_vcn.vcn.id
+  services {
+    # All NRT Services In Oracle Services Network
+    service_id = data.oci_core_services.this.services[1].id
+  }
+  # route_table_id = null
+  defined_tags = local.common_defined_tags
+}
+
+/************************************************************
 Route Table
 ************************************************************/
 resource "oci_core_route_table" "rtb_flb" {
@@ -113,6 +135,11 @@ resource "oci_core_route_table" "rtb_compute" {
     network_entity_id = oci_core_nat_gateway.ngw.id
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
+  }
+  route_rules {
+    network_entity_id = oci_core_service_gateway.service_gateway.id
+    destination       = data.oci_core_services.this.services[1].cidr_block
+    destination_type  = "SERVICE_CIDR_BLOCK"
   }
   defined_tags = local.common_defined_tags
 }
