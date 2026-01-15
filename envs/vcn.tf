@@ -56,9 +56,20 @@ resource "oci_core_internet_gateway" "igw" {
 }
 
 /************************************************************
+NAT Gateway
+************************************************************/
+resource "oci_core_nat_gateway" "ngw" {
+  compartment_id = oci_identity_compartment.workload.id
+  display_name   = "ngw"
+  vcn_id         = oci_core_vcn.vcn.id
+  block_traffic  = false
+  defined_tags = local.common_defined_tags
+}
+
+/************************************************************
 Route Table
 ************************************************************/
-resource "oci_core_route_table" "rtb" {
+resource "oci_core_route_table" "rtb_flb" {
   compartment_id = oci_identity_compartment.workload.id
   vcn_id         = oci_core_vcn.vcn.id
   display_name   = "rtb"
@@ -70,9 +81,9 @@ resource "oci_core_route_table" "rtb" {
   defined_tags = local.common_defined_tags
 }
 
-resource "oci_core_route_table_attachment" "attachment" {
+resource "oci_core_route_table_attachment" "rtb_flb_attachment" {
   subnet_id      = oci_core_subnet.public.id
-  route_table_id = oci_core_route_table.rtb.id
+  route_table_id = oci_core_route_table.rtb_flb.id
 }
 
 /************************************************************
