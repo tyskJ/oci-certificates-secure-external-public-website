@@ -45,6 +45,25 @@ resource "oci_core_subnet" "public" {
   defined_tags               = local.common_defined_tags
 }
 
+resource "oci_core_subnet" "private" {
+  compartment_id = oci_identity_compartment.workload.id
+  vcn_id         = oci_core_vcn.vcn.id
+  cidr_block     = "10.0.2.0/24"
+  display_name   = "private"
+  # 最大15文字の英数字
+  # 文字から始めること
+  # ハイフンとアンダースコアは使用不可
+  # 後から変更不可
+  dns_label         = "private"
+  security_list_ids = [oci_core_security_list.sl.id]
+  # prohibit_internet_ingress と prohibit_public_ip_on_vnic は 同様の動き
+  # そのため、２つのパラメータの true/false を互い違いにするとconflictでエラーとなる
+  # 基本的には、値を揃えるか、どちらか一方を明記すること
+  prohibit_internet_ingress  = true
+  prohibit_public_ip_on_vnic = true
+  defined_tags               = local.common_defined_tags
+}
+
 /************************************************************
 Internet Gateway
 ************************************************************/
@@ -63,7 +82,7 @@ resource "oci_core_nat_gateway" "ngw" {
   display_name   = "ngw"
   vcn_id         = oci_core_vcn.vcn.id
   block_traffic  = false
-  defined_tags = local.common_defined_tags
+  defined_tags   = local.common_defined_tags
 }
 
 /************************************************************
