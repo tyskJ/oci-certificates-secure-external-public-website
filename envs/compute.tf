@@ -3,6 +3,7 @@ Compute (Oracle Linux)
 ************************************************************/
 ##### Instance
 resource "oci_core_instance" "oracle_instance" {
+  depends_on          = [oci_core_route_table.rtb_compute]
   display_name        = "oracle-instance"
   compartment_id      = oci_identity_compartment.workload.id
   availability_domain = data.oci_identity_availability_domain.ads.name
