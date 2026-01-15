@@ -86,9 +86,9 @@ resource "oci_core_instance" "oracle_instance" {
   }
   create_vnic_details {
     display_name = "oracle-instance-vnic"
-    subnet_id    = oci_core_subnet.private_oracle.id
+    subnet_id    = oci_core_subnet.private.id
     nsg_ids = [
-      oci_core_network_security_group.sg_oracle.id
+      oci_core_network_security_group.sg_compute.id
     ]
     assign_public_ip = false
     # 最大63文字 (Windowsは15文字)
