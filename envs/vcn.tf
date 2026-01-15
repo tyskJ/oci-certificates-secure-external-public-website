@@ -146,3 +146,34 @@ resource "oci_core_network_security_group_security_rule" "sg_flb_ingress_https" 
     }
   }
 }
+
+resource "oci_core_network_security_group" "sg_compute" {
+  compartment_id = oci_identity_compartment.workload.id
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "sg-compute"
+  defined_tags   = local.common_defined_tags
+}
+
+resource "oci_core_network_security_group_security_rule" "sg_compute_ingress_http" {
+  network_security_group_id = oci_core_network_security_group.sg_compute.id
+  protocol                  = "6"
+  direction                 = "INGRESS"
+  source                    = oci_core_network_security_group.sg_flb.id
+  stateless                 = false
+  source_type               = "NETWORK_SECURITY_GROUP"
+  tcp_options {
+    destination_port_range {
+      min = 80
+      max = 80
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "sg_compute_egress_all" {
+  network_security_group_id = oci_core_network_security_group.sg_compute.id
+  protocol                  = "all"
+  direction                 = "EGRESS"
+  destination               = "0.0.0.0/0"
+  stateless                 = false
+  destination_type          = "CIDR_BLOCK"
+}
