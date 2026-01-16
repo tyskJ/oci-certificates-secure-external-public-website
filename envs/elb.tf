@@ -102,3 +102,41 @@ resource "oci_load_balancer_listener" "listener_http" {
     idle_timeout_in_seconds            = "60"
   }
 }
+
+/************************************************************
+Listener - https
+************************************************************/
+resource "oci_load_balancer_listener" "listener_https" {
+  load_balancer_id         = oci_load_balancer_load_balancer.flb.id
+  name                     = "https-listener"
+  protocol                 = "HTTP"
+  port                     = 443
+  hostname_names           = []
+  default_backend_set_name = "http-backendset"
+  routing_policy_name      = null
+  rule_set_names           = []
+  #   # パスルートセットは廃止予定
+  #   # ルーティングポリシーが上位互換のため、そちらを使うのが推奨
+  #   path_route_set_name      = null
+  connection_configuration {
+    backend_tcp_proxy_protocol_options = []
+    backend_tcp_proxy_protocol_version = 0
+    idle_timeout_in_seconds            = "60"
+  }
+  ssl_configuration {
+    certificate_ids = [
+      oci_certificates_management_certificate.certificate_flb.id
+    ]
+    protocols               = ["TLSv1.3"]
+    cipher_suite_name       = "oci-tls-13-recommended-ssl-cipher-suite-v1"
+    has_session_resumption  = true
+    server_order_preference = "ENABLED"
+    # mTLS利用時に使用する
+    certificate_name                  = null
+    trusted_certificate_authority_ids = []
+    # クライアント証明書検証時の証明書チェーンの深さ
+    verify_depth = 1
+    # mTLS有効化
+    verify_peer_certificate = false
+  }
+}
