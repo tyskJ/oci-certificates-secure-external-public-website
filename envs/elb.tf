@@ -44,3 +44,24 @@ resource "oci_load_balancer_load_balancer" "flb" {
   request_id_header            = null
   defined_tags                 = local.common_defined_tags
 }
+
+/************************************************************
+Backend Set
+************************************************************/
+resource "oci_load_balancer_backend_set" "bks_http" {
+  load_balancer_id = oci_load_balancer_load_balancer.flb.id
+  name             = "http-backendset"
+  policy           = "LEAST_CONNECTIONS"
+  health_checker {
+    protocol            = "HTTP"
+    port                = 80
+    is_force_plain_text = false
+    interval_ms         = 10000
+    timeout_in_millis   = 3000
+    retries             = 3
+    return_code         = 200
+    url_path            = "/"
+    response_body_regex = null
+  }
+  backend_max_connections = null
+}
