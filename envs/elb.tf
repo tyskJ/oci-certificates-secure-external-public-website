@@ -46,7 +46,7 @@ resource "oci_load_balancer_load_balancer" "flb" {
 }
 
 /************************************************************
-Backend Set
+Backend Sets
 ************************************************************/
 resource "oci_load_balancer_backend_set" "bks_http" {
   load_balancer_id = oci_load_balancer_load_balancer.flb.id
@@ -64,4 +64,41 @@ resource "oci_load_balancer_backend_set" "bks_http" {
     response_body_regex = null
   }
   backend_max_connections = null
+}
+
+/************************************************************
+Backends
+************************************************************/
+resource "oci_load_balancer_backend" "bk" {
+  load_balancer_id = oci_load_balancer_load_balancer.flb.id
+  backendset_name  = oci_load_balancer_backend_set.bks_http.name
+  ip_address       = oci_core_instance.oracle_instance.private_ip
+  port             = 80
+  weight           = 1
+  offline          = false
+  backup           = false
+  drain            = false
+  max_connections  = null
+}
+
+/************************************************************
+Listener - http
+************************************************************/
+resource "oci_load_balancer_listener" "listener_http" {
+  load_balancer_id         = oci_load_balancer_load_balancer.flb.id
+  name                     = "http-listener"
+  protocol                 = "HTTP"
+  port                     = 80
+  hostname_names           = []
+  default_backend_set_name = oci_load_balancer_backend_set.bks_http.name
+  routing_policy_name      = null
+  rule_set_names           = []
+  #   # パスルートセットは廃止予定
+  #   # ルーティングポリシーが上位互換のため、そちらを使うのが推奨
+  #   path_route_set_name      = null
+  connection_configuration {
+    backend_tcp_proxy_protocol_options = []
+    backend_tcp_proxy_protocol_version = 0
+    idle_timeout_in_seconds            = "60"
+  }
 }
