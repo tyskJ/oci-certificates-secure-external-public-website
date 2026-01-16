@@ -23,6 +23,11 @@ systemctl mask firewalld
 # Apache Install
 dnf install -y httpd
 systemctl enable --now httpd
+echo '<html><head></head><body><pre><code>' > /var/www/html/index.html
+hostname >> /var/www/html/index.html
+echo '' >> /var/www/html/index.html
+cat /etc/os-release >> /var/www/html/index.html
+echo '</code></pre></body></html>' >> /var/www/html/index.html
 
 # SELinux disable
 grubby --update-kernel ALL --args selinux=0
