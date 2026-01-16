@@ -56,6 +56,26 @@ resource "oci_certificates_management_certificate_authority" "root_ca" {
 }
 
 /************************************************************
+Local-Exec - Get Root CA Certificate
+************************************************************/
+resource "terraform_data" "local_exec_get_root_ca" {
+  depends_on = [
+    oci_certificates_management_certificate_authority.root_ca
+  ]
+  provisioner "local-exec" {
+    command = <<EOT
+      echo Get Root CA Certificates
+
+      oci certificates certificate-authority-bundle get \
+      --certificate-authority-id ${oci_certificates_management_certificate_authority.root_ca.id} \
+      --query "data.\"certificate-pem\"" \
+      --raw-output > "./.key/root_ca.pem" \
+      --profile ADMIN --auth security_token
+    EOT
+  }
+}
+
+/************************************************************
 Certificate
 ************************************************************/
 resource "oci_certificates_management_certificate" "certificate_flb" {
