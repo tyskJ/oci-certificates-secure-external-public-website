@@ -116,6 +116,19 @@ OCI Certificates で外部公開ウェブサイトを SSL化する
 =====================================================================
 1. 環境削除
 ---------------------------------------------------------------------
+.. warn::
+
+  * 証明書は即座に削除ができないため、認証局が削除できない
+  * そのため、認証局を Terraform 管理外にし、証明書が削除されてから手動削除すること
+  * 加えて、コンパートメントも削除できないため、Terraform 管理外にし、コンパートメント内リソースが削除されてから、手動削除すること
+
+.. code-block:: bash
+
+  terraform state rm oci_certificates_management_certificate_authority.root_ca
+  terraform state rm oci_identity_compartment.workload
+
+* 上記ステート管理外にしてから、以下実行
+
 .. code-block:: bash
 
   terraform destroy --auto-approve
