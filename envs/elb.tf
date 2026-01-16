@@ -10,4 +10,7 @@ resource "oci_core_public_ip" "flb" {
   # public_ip_pool_id = null
   # # Ephemeral Public IP の場合は必須
   # private_ip_id     = null
+  lifecycle {
+    ignore_changes = [private_ip_id]
+  }
 }
