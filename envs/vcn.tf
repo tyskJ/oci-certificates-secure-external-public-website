@@ -188,20 +188,20 @@ resource "oci_core_network_security_group" "sg_flb" {
   defined_tags   = local.common_defined_tags
 }
 
-resource "oci_core_network_security_group_security_rule" "sg_flb_ingress_http" {
-  network_security_group_id = oci_core_network_security_group.sg_flb.id
-  protocol                  = "6"
-  direction                 = "INGRESS"
-  source                    = var.source_ip
-  stateless                 = false
-  source_type               = "CIDR_BLOCK"
-  tcp_options {
-    destination_port_range {
-      min = 80
-      max = 80
-    }
-  }
-}
+# resource "oci_core_network_security_group_security_rule" "sg_flb_ingress_http" {
+#   network_security_group_id = oci_core_network_security_group.sg_flb.id
+#   protocol                  = "6"
+#   direction                 = "INGRESS"
+#   source                    = var.source_ip
+#   stateless                 = false
+#   source_type               = "CIDR_BLOCK"
+#   tcp_options {
+#     destination_port_range {
+#       min = 80
+#       max = 80
+#     }
+#   }
+# }
 
 resource "oci_core_network_security_group_security_rule" "sg_flb_ingress_https" {
   network_security_group_id = oci_core_network_security_group.sg_flb.id
