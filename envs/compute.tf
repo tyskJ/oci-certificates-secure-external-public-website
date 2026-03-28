@@ -17,11 +17,17 @@ resource "oci_core_instance" "oracle_instance" {
     memory_in_gbs = 10
   }
   instance_options {
-    are_legacy_imds_endpoints_disabled = false
+    # IMDS V1 の無効化
+    are_legacy_imds_endpoints_disabled = true
   }
   availability_config {
-    is_live_migration_preferred = false
-    recovery_action             = "RESTORE_INSTANCE"
+    # Live Migration の有効化
+    # 無効化すると、メンテナンス時に通知がOracleから届き、手動対応が必要となる
+    is_live_migration_preferred = true
+    # 物理ホストメンテナンス実行後のインスタンス復旧方法
+    # RESTORE_INSTCNE=再起動
+    # Live Migration が有効の場合は、Live Migrationが出来なかった時に本actionが実行される
+    recovery_action = "RESTORE_INSTANCE"
   }
   agent_config {
     are_all_plugins_disabled = false
